@@ -1,3 +1,5 @@
+require('./config.js');
+
 var {ObjectID} = require('mongodb');
 
 var express = require('express');
@@ -9,7 +11,7 @@ var {User} = require('./models/user');
 
 var expenseController = require('./../controllers/expensesController');
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 var app = express();
 
@@ -46,7 +48,7 @@ app.patch('/expenses/:id', (request, response) => {
 });
 
 app.listen(port, () => {
-    console.log('Started on port 3000');
+    console.log(`Started on port ${process.env.PORT}`);
 });
 
 
