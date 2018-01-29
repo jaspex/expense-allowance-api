@@ -9,6 +9,8 @@ var {User} = require('./models/user');
 
 var expenseController = require('./../controllers/expensesController');
 
+const port = process.env.PORT || 3000;
+
 var app = express();
 
 // Configure middleware
@@ -39,7 +41,7 @@ app.patch('/expenses/:id', (request, response) => {
     expenseController.update(request, response);
 });
 
-app.listen(3000, () => {
+app.listen(port, () => {
     console.log('Started on port 3000');
 });
 
