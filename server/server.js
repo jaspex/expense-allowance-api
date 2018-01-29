@@ -16,6 +16,10 @@ var app = express();
 // Configure middleware
 app.use(bodyParser.json());
 
+app.get('/', (request, response) => {
+    response.send('');
+});
+
 // POST /expenses
 app.post('/expenses', (request, response) => {
     expenseController.create(request, response);
