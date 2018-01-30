@@ -51,5 +51,4 @@ app.listen(port, () => {
     console.log(`Started on port ${process.env.PORT}`);
 });
 
-
-
+module.exports = { app };
