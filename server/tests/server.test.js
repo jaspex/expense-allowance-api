@@ -11,49 +11,74 @@ beforeEach((done) => {
     }).catch((err) => done());
 });
 
-describe('POST /expenses', () => {
-    it('should create a new expense', (done) => {
-        var text = 'New expense item';
-        var price = 9.99;
-
-        request(app)
-            .post('/expenses')
-            .send({ item: text, price })
-            .expect(200)
-            .expect((response) => {
-                expect(response.body.item).toBe(text);
-                expect(response.body.price).toBe(price);
-            })
-            .end((err, response) => {
-                if (err) {
-                    return done(err);
-                }
-
-                Expense.find().then((expense) => {
-                    expect(expense.length).toBe(1);
-                    expect(expense[0].item).toBe(text);
-                    expect(expense[0].price).toBe(price);
-                    done();
-                }).catch((err) => {
-                    done(err);
+describe('Expenses', () => {
+    describe('#POST /expenses', () => {
+        it('should create a new expense', (done) => {
+            var text = 'New expense item';
+            var price = 9.99;
+    
+            request(app)
+                .post('/expenses')
+                .send({ item: text, price })
+                .expect(200)
+                .expect((response) => {
+                    expect(response.body.item).toBe(text);
+                    expect(response.body.price).toBe(price);
+                })
+                .end((err, response) => {
+                    if (err) {
+                        return done(err);
+                    }
+    
+                    Expense.find().then((expense) => {
+                        expect(expense.length).toBe(1);
+                        expect(expense[0].item).toBe(text);
+                        expect(expense[0].price).toBe(price);
+                        done();
+                    }).catch((err) => {
+                        done(err);
+                    });
                 });
-            });
+        });
+    
+        it('should not create an expense with invalid data', (done) => {
+            request(app)
+                .post('/expenses')
+                .send()
+                .expect(400)
+                .end((err, response) => {
+                    if (err) {
+                        return done(err);
+                    }
+    
+                    Expense.find().then((expense) => {
+                        expect(expense.length).toBe(0);
+                        done();
+                    }).catch((error) => done(error));
+                });
+        });
     });
 
-    it('should not create an expense with invalid data', (done) => {
-        request(app)
-            .post('/expenses')
-            .send()
-            .expect(400)
-            .end((err, response) => {
-                if (err) {
-                    return done(err);
-                }
+    describe('#GET /expenses', () => {
+        it('should return an array of expenses', (done) => {
+            request(app)
+                .get('/expenses')
+                .send()
+                .expect(200)
+                .expect((response) => {
+                    expect(response.body).toIncludeKey('expenses');
+                    expect(response.body.expenses.length).toBe(0);
+                })
+                .end((err, response) => {
+                    if (err) {
+                        return done(err);
+                    }
 
-                Expense.find().then((expense) => {
-                    expect(expense.length).toBe(0);
-                    done();
-                }).catch((error) => done(error));
-            });
+                    Expense.find().then((expenses) => {
+                        expect(expenses.length).toBe(0);
+                        done();
+                    }).catch((e) => done(e));
+                });
+        });
     });
 });
