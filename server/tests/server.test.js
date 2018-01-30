@@ -4,9 +4,24 @@ const request = require('supertest');
 const {app} = require('./../server.js');
 const {Expense} = require('./../models/expense.js');
 
+const testData = [{
+        item: 'Item 1',
+        price: 9.99
+    },
+    {
+        item: 'Item 2',
+        price: 0.00
+    },
+    {
+        item: 'Item 3',
+        price: 12.95
+    }];
+
 // Run this before each test to clear the database
 beforeEach((done) => {
     Expense.remove({}).then((done) => {
+        Expense.insertMany(testData);
+
         done();
     }).catch((err) => done());
 });
@@ -30,7 +45,7 @@ describe('Expenses', () => {
                         return done(err);
                     }
     
-                    Expense.find().then((expense) => {
+                    Expense.find({ item: text }).then((expense) => {
                         expect(expense.length).toBe(1);
                         expect(expense[0].item).toBe(text);
                         expect(expense[0].price).toBe(price);
@@ -52,7 +67,7 @@ describe('Expenses', () => {
                     }
     
                     Expense.find().then((expense) => {
-                        expect(expense.length).toBe(0);
+                        expect(expense.length).toBe(testData.length);
                         done();
                     }).catch((error) => done(error));
                 });
@@ -67,7 +82,7 @@ describe('Expenses', () => {
                 .expect(200)
                 .expect((response) => {
                     expect(response.body).toIncludeKey('expenses');
-                    expect(response.body.expenses.length).toBe(0);
+                    expect(response.body.expenses.length).toBe(testData.length);
                 })
                 .end((err, response) => {
                     if (err) {
@@ -75,7 +90,7 @@ describe('Expenses', () => {
                     }
 
                     Expense.find().then((expenses) => {
-                        expect(expenses.length).toBe(0);
+                        expect(expenses.length).toBe(testData.length);
                         done();
                     }).catch((e) => done(e));
                 });
