@@ -1,27 +1,36 @@
 const mongoose = require('mongoose');
 const {Schema} = require('mongoose');
 const jwt = require('jsonwebtoken');
+const validator = require('validator');
 
 var UserSchema = new Schema({
     email:{
-        type: String,
-        required: true,
-        trim: true,
-        minlength: 1
+        type: String
+      , required: true
+      , trim: true
+      , minlength: 1
+      , unique: true
+      , validate: {
+          validator: validator.isEmail,
+          //validator: (value) => {
+          //    validatior.isEmail(value)
+          //},
+          message: '{VALUE} is not a valid email'
+      }
     },
     password: {
-        type: String,
-        required: true,
-        minlength: 6
+        type: String
+      , required: true
+      , minlength: 6
     },
     tokens: [{
         access: {
-            type: String,
-            required: true
+            type: String
+          , required: true
         },
         token: {
-            type: String,
-            required: true
+            type: String
+          , required: true
         }
     }]
 });

@@ -2,7 +2,7 @@ const {ObjectID} = require('mongodb');
 const bodyParser = require('body-parser');
 const _ = require('lodash');
 
-var {Expense} = require('./../server/models/expense');
+var {Expense} = require('./../models/expense.js');
 
 // GET /expenses
 module.exports.find = (request, response) => {

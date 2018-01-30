@@ -6,10 +6,11 @@ var express = require('express');
 var bodyParser = require('body-parser');
 
 var {mongoose} = require('./db/mongoose');
-var {Expense} = require('./models/expense');
-var {User} = require('./models/user');
+//var {Expense} = require('./models/expense');
+//var {User} = require('./models/user');
 
 var expenseController = require('./../controllers/expensesController');
+var userController = require('./../controllers/usersController.js');
 
 const port = process.env.PORT;
 
@@ -27,7 +28,7 @@ app.post('/expenses', (request, response) => {
     expenseController.create(request, response);
 });
 
-// DELEETE /expenses
+// DELETE /expenses
 app.delete('/expenses/:id', (request, response) => {
     expenseController.delete(request, response);
 });
@@ -42,13 +43,22 @@ app.get('/expenses/:id', (request, response) => {
     expenseController.findById(request, response);
 });
 
-// PUT
+// PATCH /expenses/{id}
 app.patch('/expenses/:id', (request, response) => {
     expenseController.update(request, response);
 });
 
-app.listen(port, () => {
-    console.log(`Started on port ${process.env.PORT}`);
+// POST /users
+app.post('/users', (request, response) => {
+    userController.create(request, response);
 });
+
+
+
+
+app.listen(port, () => {
+    console.log(`Started on port ${process.env.PORT} running as ${process.env.NODE_ENV}`);
+});
+
 
 module.exports = { app };
