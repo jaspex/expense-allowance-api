@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const {Schema} = require('mongoose');
 const jwt = require('jsonwebtoken');
 const validator = require('validator');
+const uuid = require('uuid/v4');
+const _ = require('lodash');
 
 var UserSchema = new Schema({
     email:{
@@ -23,6 +25,9 @@ var UserSchema = new Schema({
       , required: true
       , minlength: 6
     },
+    salt: {
+        type: String
+    },
     tokens: [{
         access: {
             type: String
@@ -40,8 +45,9 @@ UserSchema.methods.generateAuthenticationToken = function() {
     var user = this;
     var access = 'auth';
     var token = jwt.sign({ 
-        _id: use._id.toHexString(), 
-        access: access }, 'secret_salt').toString();
+            _id: user._id.toHexString(), 
+            access: access 
+        }, 'secret_salt', 'HS512').toString();
     
     user.tokens.push({
         access: access, 
@@ -51,6 +57,40 @@ UserSchema.methods.generateAuthenticationToken = function() {
         return token;
     });
 };
+
+UserSchema.methods.hashPassword = function() {
+    var user = this;
+    var salt = uuid(); // Generate random string '416ac246-e7ac-49ff-93b4-f7e94d997e6b'
+
+}
+
+UserSchema.methods.toJSON = function () {
+    var user = this;
+    var userObject = user.toObject();
+
+    return _.pick(userObject, ['_id', 'email']);
+}
+
+// Model methods
+UserSchema.statics.findByToken = function(token) {
+    var User = this;
+    var decoded;
+
+    try {
+        decoded = jwt.verify(token, 'secret_salt');
+    } catch (e) {
+        return Promise.reject();
+        // return new Promise((resolve, reject) => {
+        //     reject();
+        // });
+    }
+
+    return User.findOne({
+        '_id': decoded._id,
+        'tokens.token': token,
+        'tokens.access': 'auth'
+    });
+}
 
 var User = mongoose.model('User', UserSchema);
 
