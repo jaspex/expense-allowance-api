@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const {Schema} = require('mongoose');
 const jwt = require('jsonwebtoken');
 const validator = require('validator');
-const uuid = require('uuid/v4');
+// const uuid = require('uuid/v4');
 const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 
@@ -90,6 +90,31 @@ UserSchema.statics.findByToken = function(token) {
         '_id': decoded._id,
         'tokens.token': token,
         'tokens.access': 'auth'
+    });
+}
+
+UserSchema.statics.findByCredentials = function(email, password) {
+    var User = this;
+
+    return User.findOne({ email }).then((user) => {
+        if (!user) {
+            return Promise.reject();
+        }
+
+        return new Promise((resolve, reject) => {
+            bcrypt.compare(password, user.password, (err, result) => {
+                if (err) {
+                    reject(err);
+                }
+
+                if (result) {
+                    resolve(user);
+                } else {
+                    reject();
+                }
+            })
+        });        
+        //return bcrypt.compare(password, user.password);
     });
 }
 

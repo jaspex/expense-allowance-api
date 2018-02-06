@@ -113,7 +113,6 @@ describe('Users', () => {
                 .post('/users')
                 .send({ email, password })
                 .expect(200)
-                .expect('')
                 .expect((response) => {
                     expect(response.body.email).toBe(email)
                 })

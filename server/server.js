@@ -53,7 +53,11 @@ app.post('/users', (request, response) => {
 });
 
 app.get('/users/me', authenticate, (request, response) => {
-    response.send(request.user);
+    userController.me(request, response);
+});
+
+app.post('/users/sign_in', (request, response) => {
+    userController.signIn(request, response);
 });
 
 app.listen(port, () => {
