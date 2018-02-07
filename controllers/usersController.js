@@ -38,6 +38,17 @@ module.exports.signIn = (request, response) => {
     })
 }
 
+module.exports.signOut = (request, response) => {
+    request.user.removeToken(request.token).then(() => {
+        response
+            .send();
+    }).catch((e) => {
+        response
+            .status('400')
+            .send();
+    })
+}
+
 // GET /users/me
 module.exports.me = (request, response) => {
     response.send(request.user);

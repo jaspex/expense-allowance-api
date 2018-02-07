@@ -60,6 +60,10 @@ app.post('/users/sign_in', (request, response) => {
     userController.signIn(request, response);
 });
 
+app.delete('/users/me/sign_out', authenticate, (request, response) => {
+    userController.signOut(request, response);
+});
+
 app.listen(port, () => {
     console.log(`Started on port ${process.env.PORT} running as ${process.env.NODE_ENV}`);
 });
